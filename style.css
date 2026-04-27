@@ -1,24 +1,72 @@
+:root {
+    --bg-color: #f0f2f5;
+    --container-bg: #ffffff;
+    --text-color: #333333;
+    --lotto-bg: #4CAF50;
+    --btn-bg: #008CBA;
+    --btn-hover: #005f7a;
+    --shadow: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode {
+    --bg-color: #1a1a1a;
+    --container-bg: #2d2d2d;
+    --text-color: #f0f2f5;
+    --lotto-bg: #66bb6a;
+    --btn-bg: #0077a3;
+    --btn-hover: #005f7a;
+    --shadow: rgba(0, 0, 0, 0.4);
+}
+
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f0f2f5;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+#theme-btn {
+    background: none;
+    border: 2px solid var(--text-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color);
+    transition: all 0.3s;
+}
+
+#theme-btn:hover {
+    transform: scale(1.1);
 }
 
 .container {
     text-align: center;
-    background-color: white;
+    background-color: var(--container-bg);
     padding: 40px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px var(--shadow);
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 h1 {
     margin-bottom: 30px;
-    color: #333;
+    color: var(--text-color);
 }
 
 .lotto-numbers {
@@ -31,7 +79,7 @@ h1 {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: #4CAF50;
+    background-color: var(--lotto-bg);
     color: white;
     font-size: 24px;
     display: flex;
@@ -39,19 +87,24 @@ h1 {
     align-items: center;
     margin: 0 5px;
     font-weight: bold;
+    box-shadow: 0 2px 4px var(--shadow);
 }
 
 #generate-btn {
-    background-color: #008CBA;
+    background-color: var(--btn-bg);
     color: white;
     padding: 15px 25px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.1s;
 }
 
 #generate-btn:hover {
-    background-color: #005f7a;
+    background-color: var(--btn-hover);
+}
+
+#generate-btn:active {
+    transform: scale(0.98);
 }
