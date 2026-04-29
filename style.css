@@ -23,21 +23,24 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
+    padding: 60px 20px;
+    box-sizing: border-box;
     transition: background-color 0.3s, color 0.3s;
 }
 
 .theme-toggle {
-    position: absolute;
+    position: fixed;
     top: 20px;
     right: 20px;
+    z-index: 1000;
 }
 
 #theme-btn {
-    background: none;
+    background: var(--container-bg);
     border: 2px solid var(--text-color);
     border-radius: 50%;
     width: 40px;
@@ -48,6 +51,7 @@ body {
     justify-content: center;
     align-items: center;
     color: var(--text-color);
+    box-shadow: 0 2px 4px var(--shadow);
     transition: all 0.3s;
 }
 
@@ -61,10 +65,13 @@ body {
     padding: 40px;
     border-radius: 10px;
     box-shadow: 0 4px 8px var(--shadow);
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 40px;
     transition: background-color 0.3s, box-shadow 0.3s;
 }
 
-h1 {
+h1, h2 {
     margin-bottom: 30px;
     color: var(--text-color);
 }
@@ -104,7 +111,85 @@ h1 {
 #generate-btn:hover {
     background-color: var(--btn-hover);
 }
-
 #generate-btn:active {
     transform: scale(0.98);
 }
+
+.contact-section {
+    width: 100%;
+    max-width: 500px;
+    background-color: var(--container-bg);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px var(--shadow);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.form-group input, 
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: border-color 0.3s;
+}
+
+body.dark-mode .form-group input,
+body.dark-mode .form-group textarea {
+    border-color: #444;
+}
+
+.form-group input:focus, 
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--btn-bg);
+}
+
+.submit-btn {
+    width: 100%;
+    background-color: var(--lotto-bg);
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: opacity 0.3s, transform 0.1s;
+}
+
+.submit-btn:hover {
+    opacity: 0.9;
+}
+
+.comments-section {
+    width: 100%;
+    max-width: 500px;
+    background-color: var(--container-bg);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px var(--shadow);
+    margin-top: 40px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+#disqus_thread {
+    width: 100%;
+}
+

@@ -16,6 +16,31 @@
         </div>
         <button id="generate-btn">번호 추첨</button>
     </div>
+
+    <div class="contact-section">
+        <h2>제휴 문의</h2>
+        <form action="https://formspree.io/f/maqagvlj" method="POST">
+            <div class="form-group">
+                <label for="name">성함</label>
+                <input type="text" id="name" name="name" placeholder="성함을 입력해주세요" required>
+            </div>
+            <div class="form-group">
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email" placeholder="example@email.com" required>
+            </div>
+            <div class="form-group">
+                <label for="message">문의 내용</label>
+                <textarea id="message" name="message" rows="5" placeholder="문의하실 내용을 입력해주세요" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">문의하기</button>
+        </form>
+    </div>
+
+    <div class="comments-section">
+        <h2>댓글</h2>
+        <div id="disqus_thread"></div>
+    </div>
+
     <script src="main.js"></script>
 </body>
 </html>
