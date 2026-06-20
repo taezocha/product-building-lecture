@@ -483,6 +483,12 @@
       border-bottom: 1px solid var(--line);
       transition: background-color 0.3s ease, border-color 0.3s ease;
     }
+    .comments-section {
+      padding: 48px 0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
     .contact-form {
       max-width: 600px;
       margin: 0 auto;
@@ -541,6 +547,7 @@
         <a href="#framework" data-ko="이론 기반" data-en="Framework">이론 기반</a>
         <a href="#pricing" data-ko="구독 플랜" data-en="Pricing">구독 플랜</a>
         <a href="#contact" data-ko="제휴 문의" data-en="Contact">제휴 문의</a>
+        <a href="#comments" data-ko="의견 및 토론" data-en="Discussion">의견 및 토론</a>
         <a href="#cta" data-ko="시작하기" data-en="Get Started">시작하기</a>
         <button class="lang-toggle" id="langBtn">KR / EN</button>
         <button class="theme-toggle" id="themeBtn" aria-label="Toggle theme">🌙 다크 모드</button>
@@ -763,6 +770,16 @@
       </div>
     </section>
 
+    <section id="comments" class="comments-section">
+      <div class="container">
+        <div class="section-head" style="text-align: center;">
+          <h2 id="comments-title">의견 및 토론</h2>
+          <p id="comments-desc" style="margin-left: auto; margin-right: auto;">서비스에 대한 피드백이나 질문을 자유롭게 남겨주세요.</p>
+        </div>
+        <div id="disqus_thread"></div>
+      </div>
+    </section>
+
     <section id="cta">
       <div class="container">
         <div class="cta-banner">
@@ -850,7 +867,9 @@
         placeholderEmail: 'your-email@example.com',
         placeholderPhone: '010-0000-0000',
         placeholderMessage: '제휴 제안 또는 문의 사항을 적어주세요.',
-        contactSubmit: '문의 보내기'
+        contactSubmit: '문의 보내기',
+        commentsTitle: '의견 및 토론',
+        commentsDesc: '서비스에 대한 피드백이나 질문을 자유롭게 남겨주세요.'
       },
       en: {
         brandSubtitle: 'Youth Growth Reports · Mental Analysis Platform',
@@ -915,7 +934,9 @@
         placeholderEmail: 'your-email@example.com',
         placeholderPhone: '+82 10-0000-0000',
         placeholderMessage: 'Write your partnership proposal or inquiries here.',
-        contactSubmit: 'Send Inquiry'
+        contactSubmit: 'Send Inquiry',
+        commentsTitle: 'Comments & Discussion',
+        commentsDesc: 'Feel free to leave your feedback or ask questions about our service.'
       }
     };
 
@@ -936,7 +957,8 @@
       ctaTitle: 'cta-title', ctaCopy: 'cta-copy', ctaBtn: 'cta-btn', footerCopy: 'footer-copy',
       contactTitle: 'contact-title', contactDesc: 'contact-desc', labelName: 'label-name',
       labelEmail: 'label-email', labelPhone: 'label-phone', labelMessage: 'label-message',
-      contactSubmit: 'contact-submit'
+      contactSubmit: 'contact-submit',
+      commentsTitle: 'comments-title', commentsDesc: 'comments-desc'
     };
 
     function setLanguage(lang) {
@@ -966,6 +988,18 @@
       if (emailInput) emailInput.placeholder = t.placeholderEmail || '';
       if (phoneInput) phoneInput.placeholder = t.placeholderPhone || '';
       if (messageInput) messageInput.placeholder = t.placeholderMessage || '';
+
+      // Reset Disqus with new language
+      if (typeof DISQUS !== 'undefined') {
+        DISQUS.reset({
+          reload: true,
+          config: function () {
+            this.language = lang === 'ko' ? 'ko' : 'en';
+            this.page.url = window.location.href;
+            this.page.identifier = 'product-building-lecture-index';
+          }
+        });
+      }
     }
 
     // Theme Toggle Logic
@@ -999,6 +1033,20 @@
     document.getElementById('langBtn').addEventListener('click', () => {
       setLanguage(currentLang === 'ko' ? 'en' : 'ko');
     });
+
+    // Disqus Comments Integration
+    var disqus_config = function () {
+      this.language = currentLang === 'ko' ? 'ko' : 'en';
+      this.page.url = window.location.href;
+      this.page.identifier = 'product-building-lecture-index';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://lotto-generator-1.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
   </script>
 </body>
 </html>
