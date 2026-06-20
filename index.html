@@ -467,6 +467,54 @@
       .mini-stats, .score-box { grid-template-columns: 1fr; }
       .hero { padding-top: 42px; }
     }
+
+    .contact-section {
+      padding: 48px 0;
+      background: var(--card);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .contact-form {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .form-control {
+      padding: 12px 16px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 12px;
+      font-size: 15px;
+      font-family: inherit;
+      transition: all 0.3s ease;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-2);
+      box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
+    }
+    .form-control::placeholder {
+      color: var(--muted);
+      opacity: 0.7;
+    }
+    textarea.form-control {
+      resize: vertical;
+      min-height: 120px;
+    }
   </style>
 </head>
 <body>
@@ -484,6 +532,7 @@
         <a href="#features" data-ko="핵심 기능" data-en="Features">핵심 기능</a>
         <a href="#framework" data-ko="이론 기반" data-en="Framework">이론 기반</a>
         <a href="#pricing" data-ko="구독 플랜" data-en="Pricing">구독 플랜</a>
+        <a href="#contact" data-ko="제휴 문의" data-en="Contact">제휴 문의</a>
         <a href="#cta" data-ko="시작하기" data-en="Get Started">시작하기</a>
         <button class="lang-toggle" id="langBtn">KR / EN</button>
         <button class="theme-toggle" id="themeBtn" aria-label="Toggle theme">🌙 다크 모드</button>
@@ -673,6 +722,39 @@
       </div>
     </section>
 
+    <section id="contact" class="contact-section">
+      <div class="container">
+        <div class="section-head" style="text-align: center;">
+          <h2 id="contact-title">제휴 문의</h2>
+          <p id="contact-desc" style="margin-left: auto; margin-right: auto;">Sports Mentality Database Platform과의 파트너십 및 단체(아카데미/클럽) 도입 문의를 보내주세요.</p>
+        </div>
+        
+        <form action="https://formspree.io/f/xzdqnlgb" method="POST" class="contact-form">
+          <div class="form-group">
+            <label for="contact-name" id="label-name">이름 / 단체명</label>
+            <input type="text" id="contact-name" name="name" class="form-control" placeholder="홍길동 / OO 아카데미" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="contact-email" id="label-email">이메일 주소</label>
+            <input type="email" id="contact-email" name="email" class="form-control" placeholder="your-email@example.com" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="contact-phone" id="label-phone">연락처 (선택)</label>
+            <input type="tel" id="contact-phone" name="phone" class="form-control" placeholder="010-0000-0000" />
+          </div>
+          
+          <div class="form-group">
+            <label for="contact-message" id="label-message">문의 내용</label>
+            <textarea id="contact-message" name="message" class="form-control" placeholder="제휴 제안 또는 문의 사항을 적어주세요." required></textarea>
+          </div>
+          
+          <button type="submit" class="btn btn-primary" id="contact-submit" style="width: 100%; margin-top: 8px;">문의 보내기</button>
+        </form>
+      </div>
+    </section>
+
     <section id="cta">
       <div class="container">
         <div class="cta-banner">
@@ -748,7 +830,18 @@
         ctaTitle: '첫 번째 멘탈 데이터부터 시작하세요',
         ctaCopy: '오늘의 기록이 쌓이면, 내일의 성장 리포트가 됩니다. 선수, 학부모, 코치를 연결하는 글로벌 멘탈 데이터 플랫폼을 지금 시작해보세요.',
         ctaBtn: '무료 체험 시작',
-        footerCopy: 'Mental data, growth reports, and subscription-based athlete development.'
+        footerCopy: 'Mental data, growth reports, and subscription-based athlete development.',
+        contactTitle: '제휴 문의',
+        contactDesc: 'Sports Mentality Database Platform과의 파트너십 및 단체(아카데미/클럽) 도입 문의를 보내주세요.',
+        labelName: '이름 / 단체명',
+        labelEmail: '이메일 주소',
+        labelPhone: '연락처 (선택)',
+        labelMessage: '문의 내용',
+        placeholderName: '홍길동 / OO 아카데미',
+        placeholderEmail: 'your-email@example.com',
+        placeholderPhone: '010-0000-0000',
+        placeholderMessage: '제휴 제안 또는 문의 사항을 적어주세요.',
+        contactSubmit: '문의 보내기'
       },
       en: {
         eyebrow: '⚽ Post-match mental data becomes the foundation for next growth',
@@ -801,7 +894,18 @@
         ctaTitle: 'Start with your first mental data point',
         ctaCopy: 'Today\'s record becomes tomorrow\'s growth report. Start a global mental data platform connecting players, parents, and coaches.',
         ctaBtn: 'Start Free Trial',
-        footerCopy: 'Mental data, growth reports, and subscription-based athlete development.'
+        footerCopy: 'Mental data, growth reports, and subscription-based athlete development.',
+        contactTitle: 'Partnership Inquiry',
+        contactDesc: 'Please send your inquiries regarding partnerships or group (academy/club) licensing for our platform.',
+        labelName: 'Name / Organization',
+        labelEmail: 'Email Address',
+        labelPhone: 'Contact Number (Optional)',
+        labelMessage: 'Message',
+        placeholderName: 'John Doe / OO Academy',
+        placeholderEmail: 'your-email@example.com',
+        placeholderPhone: '+82 10-0000-0000',
+        placeholderMessage: 'Write your partnership proposal or inquiries here.',
+        contactSubmit: 'Send Inquiry'
       }
     };
 
@@ -818,7 +922,10 @@
       popularBadge: 'popular-badge', plan2Period: 'plan2-period', plan2Desc: 'plan2-desc', plan2Li1: 'plan2-li1',
       plan2Li2: 'plan2-li2', plan2Li3: 'plan2-li3', plan2Btn: 'plan2-btn', plan3Period: 'plan3-period', plan3Desc: 'plan3-desc',
       plan3Li1: 'plan3-li1', plan3Li2: 'plan3-li2', plan3Li3: 'plan3-li3', plan3Btn: 'plan3-btn', pricingNote: 'pricing-note',
-      ctaTitle: 'cta-title', ctaCopy: 'cta-copy', ctaBtn: 'cta-btn', footerCopy: 'footer-copy'
+      ctaTitle: 'cta-title', ctaCopy: 'cta-copy', ctaBtn: 'cta-btn', footerCopy: 'footer-copy',
+      contactTitle: 'contact-title', contactDesc: 'contact-desc', labelName: 'label-name',
+      labelEmail: 'label-email', labelPhone: 'label-phone', labelMessage: 'label-message',
+      contactSubmit: 'contact-submit'
     };
 
     function setLanguage(lang) {
@@ -837,6 +944,17 @@
       currentLang = lang;
       document.documentElement.lang = lang;
       updateThemeButton();
+
+      // Update placeholders
+      const nameInput = document.getElementById('contact-name');
+      const emailInput = document.getElementById('contact-email');
+      const phoneInput = document.getElementById('contact-phone');
+      const messageInput = document.getElementById('contact-message');
+      
+      if (nameInput) nameInput.placeholder = t.placeholderName || '';
+      if (emailInput) emailInput.placeholder = t.placeholderEmail || '';
+      if (phoneInput) phoneInput.placeholder = t.placeholderPhone || '';
+      if (messageInput) messageInput.placeholder = t.placeholderMessage || '';
     }
 
     // Theme Toggle Logic
