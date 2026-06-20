@@ -1,0 +1,31 @@
+# IDE and agent settings
+.agents/
+.claude/
+.gemini/
+.idea/
+.vscode/
+
+# Python cache and environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.venv/
+env/
+.env
+
+# Large files and binary models
+digit_model.pkl
+*.pkl
+*.model
+*.h5
+
+# OS generated files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Lecture PDFs (if you want to exclude them, uncomment below. For now, let's exclude PDFs to keep the repo clean and lightweight, but feel free to track them if needed)
+*.pdf
+*.docx

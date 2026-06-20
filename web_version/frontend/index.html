@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>손글씨 숫자 인식</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 40px 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      padding: 32px 28px;
+      width: 380px;
+    }
+
+    h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 0.82rem;
+      color: #888;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Canvas */
+    .canvas-wrap {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      margin: 0 auto 16px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 0 2px #ccc;
+      cursor: crosshair;
+    }
+
+    #canvas {
+      display: block;
+      background: #fff;
+      touch-action: none;
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      flex: 1;
+      padding: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, background 0.15s;
+    }
+
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    #btn-predict {
+      background: #1a73e8;
+      color: #fff;
+    }
+
+    #btn-predict:not(:disabled):hover { background: #1558b0; }
+
+    #btn-clear {
+      background: #f0f4f8;
+      color: #444;
+    }
+
+    #btn-clear:hover { background: #e2e8f0; }
+
+    /* Result */
+    #result {
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1a73e8;
+      min-height: 40px;
+      margin-bottom: 16px;
+    }
+
+    #result.placeholder { color: #bbb; font-size: 1rem; font-weight: 400; }
+    #result.error { color: #e53e3e; font-size: 1rem; }
+
+    /* Confidence bars */
+    .bars { display: flex; flex-direction: column; gap: 5px; }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+    }
+
+    .bar-label {
+      width: 14px;
+      text-align: right;
+      font-family: monospace;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .bar-label.active { color: #1a73e8; }
+
+    .bar-track {
+      flex: 1;
+      height: 10px;
+      background: #f0f4f8;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: #ccc;
+      border-radius: 5px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .bar-fill.active { background: #1a73e8; }
+
+    .bar-pct {
+      width: 38px;
+      text-align: right;
+      color: #888;
+      font-family: monospace;
+    }
+
+    .bar-pct.active { color: #1a73e8; font-weight: 600; }
+
+    /* Status */
+    #status {
+      margin-top: 14px;
+      font-size: 0.78rem;
+      color: #aaa;
+      text-align: center;
+      min-height: 18px;
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>손글씨 숫자 인식</h1>
+  <p class="subtitle">캔버스에 숫자(0-9)를 그리고 예측을 눌러보세요</p>
+
+  <div class="canvas-wrap">
+    <canvas id="canvas" width="280" height="280"></canvas>
+  </div>
+
+  <div class="btn-row">
+    <button id="btn-predict" disabled>예측</button>
+    <button id="btn-clear">지우기</button>
+  </div>
+
+  <div id="result" class="placeholder">숫자를 그린 뒤 예측을 누르세요</div>
+
+  <div class="bars" id="bars"></div>
+  <div id="status">서버에 연결 중...</div>
+</div>
+
+<script>
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const btnPredict = document.getElementById('btn-predict');
+  const btnClear = document.getElementById('btn-clear');
+  const resultEl = document.getElementById('result');
+  const statusEl = document.getElementById('status');
+  const barsEl = document.getElementById('bars');
+
+  // ── Build bar rows ──────────────────────────────────────────────
+  const barFills = [];
+  const barPcts = [];
+  const barLabels = [];
+
+  for (let i = 0; i < 10; i++) {
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+
+    const label = document.createElement('span');
+    label.className = 'bar-label';
+    label.textContent = i;
+
+    const track = document.createElement('div');
+    track.className = 'bar-track';
+
+    const fill = document.createElement('div');
+    fill.className = 'bar-fill';
+    track.appendChild(fill);
+
+    const pct = document.createElement('span');
+    pct.className = 'bar-pct';
+    pct.textContent = '0.0%';
+
+    row.appendChild(label);
+    row.appendChild(track);
+    row.appendChild(pct);
+    barsEl.appendChild(row);
+
+    barFills.push(fill);
+    barPcts.push(pct);
+    barLabels.push(label);
+  }
+
+  // ── Canvas drawing ──────────────────────────────────────────────
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, 280, 280);
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 20;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  let drawing = false;
+  let lastX = 0, lastY = 0;
+
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return [src.clientX - rect.left, src.clientY - rect.top];
+  }
+
+  canvas.addEventListener('pointerdown', e => {
+    drawing = true;
+    [lastX, lastY] = getPos(e);
+    ctx.beginPath();
+    ctx.arc(lastX, lastY, 10, 0, Math.PI * 2);
+    ctx.fillStyle = '#000';
+    ctx.fill();
+  });
+
+  canvas.addEventListener('pointermove', e => {
+    if (!drawing) return;
+    const [x, y] = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    [lastX, lastY] = [x, y];
+  });
+
+  canvas.addEventListener('pointerup',    () => drawing = false);
+  canvas.addEventListener('pointerleave', () => drawing = false);
+
+  // ── Clear ───────────────────────────────────────────────────────
+  btnClear.addEventListener('click', () => {
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, 280, 280);
+    resultEl.textContent = '숫자를 그린 뒤 예측을 누르세요';
+    resultEl.className = 'placeholder';
+    barFills.forEach((f, i) => {
+      f.style.width = '0%';
+      f.className = 'bar-fill';
+      barPcts[i].textContent = '0.0%';
+      barPcts[i].className = 'bar-pct';
+      barLabels[i].className = 'bar-label';
+    });
+  });
+
+  // ── Predict ─────────────────────────────────────────────────────
+  btnPredict.addEventListener('click', async () => {
+    btnPredict.disabled = true;
+    resultEl.textContent = '분석 중...';
+    resultEl.className = 'placeholder';
+
+    const imageData = canvas.toDataURL('image/png');
+
+    try {
+      const res = await fetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: imageData }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || res.statusText);
+      }
+
+      const data = await res.json();
+
+      resultEl.textContent = `예측: ${data.digit}  (${(data.confidence * 100).toFixed(1)}% 확신)`;
+      resultEl.className = '';
+
+      data.probabilities.forEach((p, i) => {
+        const pct = (p * 100).toFixed(1);
+        barFills[i].style.width = pct + '%';
+        barPcts[i].textContent = pct + '%';
+
+        const active = i === data.digit;
+        barFills[i].className = 'bar-fill' + (active ? ' active' : '');
+        barPcts[i].className = 'bar-pct' + (active ? ' active' : '');
+        barLabels[i].className = 'bar-label' + (active ? ' active' : '');
+      });
+    } catch (err) {
+      resultEl.textContent = '오류: ' + err.message;
+      resultEl.className = 'error';
+    } finally {
+      btnPredict.disabled = false;
+    }
+  });
+
+  // ── Check server readiness ──────────────────────────────────────
+  async function waitForServer() {
+    for (let i = 0; i < 60; i++) {
+      try {
+        const res = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: '' }),
+        });
+        // 400 = server up, model ready (empty canvas error)
+        if (res.status === 400 || res.status === 200) {
+          statusEl.textContent = '모델 준비 완료 — 숫자를 그려보세요!';
+          btnPredict.disabled = false;
+          return;
+        }
+      } catch (_) {}
+      statusEl.textContent = `모델 로딩 중... (${i + 1}s)`;
+      await new Promise(r => setTimeout(r, 1000));
+    }
+    statusEl.textContent = '서버 연결 실패. 백엔드가 실행 중인지 확인하세요.';
+  }
+
+  waitForServer();
+</script>
+</body>
+</html>
